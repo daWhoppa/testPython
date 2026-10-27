@@ -1,0 +1,7 @@
+psycopg2-binary
+requests
+langchain
+langchain-community
+psycopg2-binary
+sqlalchemy
+psutil
