@@ -1,59 +1,63 @@
-from savingsaccount import SavingsAccount
-from checkingaccount import CheckingAccount
-
-class Bank:
+class RentalAgency:
     def __init__(self, name):
-        # TODO: Initialize bank with name
-        # TODO: Store name as self.name
-        # TODO: Initialize empty dictionary for accounts as self.accounts
+        # Initialize properties Rupert
         self.name = name
-        self.accounts = {}
+        self.vehicles = {}  # Dictionary to store vehicles (key: VIN, value: Vehicle object)
+        self.rentals = {}   # Dictionary to store rentals (key: rental_id, value: Rental object)
+        self.next_rental_id = 1
     
-    def create_account(self, account_type, account_number, owner_name, initial_balance=0, **kwargs):
-        # TODO: Check if account_number already exists in self.accounts
-        # TODO: If exists, return (False, "Account number already exists")
-        # TODO: Check account_type (case-insensitive)
-        # TODO: If "savings", create SavingsAccount with parameters and **kwargs
-        # TODO: If "checking", create CheckingAccount with parameters and **kwargs
-        # TODO: If invalid type, return (False, "Invalid account type")
-        # TODO: Store account in self.accounts with account_number as key
-        # TODO: Return (True, f"{account_type.title()} account created successfully")
-        if account_number in self.accounts:
-            return False, "Account number already exists"
-        
-        account_type = account_type.lower()
-        if account_type == "savings":
-            account = SavingsAccount(account_number, owner_name, initial_balance, **kwargs)
-        elif account_type == "checking":
-            account = CheckingAccount(account_number, owner_name, initial_balance, **kwargs)
-        else:
-            return False, "Invalid account type"
-        
-        self.accounts[account_number] = account
-        return True, f"{account_type.title()} account created successfully"
+    def add_vehicle(self, vehicle):
+        # TODO: Add the vehicle to the vehicles dictionary using its VIN as the key
+        # TODO: Return True to indicate successful completion
+        self.vehicles[vehicle.vin] = vehicle
+        return True
 
-    def get_account(self, account_number):
-        # TODO: Return account from self.accounts dictionary using account_number as key
-        # TODO: Use .get() method to return None if account doesn't exist
-        return self.accounts.get(account_number)
+    def rent_vehicle(self, vin, customer_name, days):
+        # TODO: Check if the vehicle with the given VIN exists in self.vehicles
+        # TODO: If not, return None
+        # TODO: Get the vehicle object from self.vehicles
+        # TODO: Check if the vehicle is available
+        # TODO: If not available, return None
+        # TODO: Create a rental_id string in the format "R{self.next_rental_id}"
+        # TODO: Increment self.next_rental_id
+        # TODO: Create a new Rental object with the rental_id, vehicle, customer_name, and days
+        # TODO: Call the vehicle's start_rental method
+        # TODO: Add the rental to self.rentals using rental_id as the key
+        # TODO: Return the rental_id
+        if vin not in self.vehicles:
+            return None
 
-    def transfer(self, from_account_number, to_account_number, amount):
-        # TODO: Get from_account and to_account using get_account method
-        # TODO: Check if both accounts exist
-        # TODO: If either account not found, return (False, "One or both accounts not found")
-        # TODO: Try to withdraw amount from from_account
-        # TODO: If withdrawal fails, return (False, f"Transfer failed: {message}")
-        # TODO: If withdrawal succeeds, deposit amount to to_account
-        # TODO: Return (True, f"Transferred ${amount:.2f} from {from_account_number} to {to_account_number}")
-        from_account = self.get_account(from_account_number)
-        to_account = self.get_account(to_account_number)
+        vehicle = self.vehicles[vin]
+        if not vehicle.available:
+            return None
 
-        if not from_account or not to_account:
-            return False, "One or both accounts not found"
+        rental_id = f"R{self.next_rental_id}"
+        self.next_rental_id += 1
 
-        success, message = from_account.withdraw(amount)
-        if not success:
-            return False, f"Transfer failed: {message}"
+        rental = Rental(rental_id, vehicle, customer_name, days)
+        vehicle.start_rental()
+        self.rentals[rental_id] = rental
+        return rental_id
 
-        to_account.deposit(amount)
-        return True, f"Transferred ${amount:.2f} from {from_account_number} to {to_account_number}"
+    def return_vehicle(self, rental_id):
+        # TODO: Check if the rental with the given rental_id exists in self.rentals
+        # TODO: If not, return False
+        # TODO: Get the rental object from self.rentals
+        # TODO: Check if the rental is active
+        # TODO: If not active, return False
+        # TODO: Call the rental's end_rental method and return its result
+        if rental_id not in self.rentals:
+            return False
+
+        rental = self.rentals[rental_id]
+        if not rental.active:
+            return False
+
+        result = rental.end_rental()
+        del self.rentals[rental_id]
+        return result
+
+    def available_vehicles(self):
+        # TODO: Return a list of all vehicles in self.vehicles.values() where vehicle.available is True
+        # TODO: Use a list comprehension for this
+        return [vehicle for vehicle in self.vehicles.values() if vehicle.available]
