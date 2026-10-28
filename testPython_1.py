@@ -1,6 +1,6 @@
 class RentalAgency:
     def __init__(self, name):
-        # Initialize properties Rupert
+        # Initialize properties Rupert Chen 
         self.name = name
         self.vehicles = {}  # Dictionary to store vehicles (key: VIN, value: Vehicle object)
         self.rentals = {}   # Dictionary to store rentals (key: rental_id, value: Rental object)
